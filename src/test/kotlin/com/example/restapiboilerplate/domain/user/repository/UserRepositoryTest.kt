@@ -1,12 +1,16 @@
 package com.example.restapiboilerplate.domain.user.repository
 
 import com.example.restapiboilerplate.SpringIntegrationTest
+import com.example.restapiboilerplate.config.JpaConfig
 import com.example.restapiboilerplate.newUser
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.context.annotation.Import
+import java.time.LocalDateTime
 
+@Import(JpaConfig::class)
 @DataJpaTest
 class UserRepositoryTest(
     private val userRepository: UserRepository,
@@ -18,8 +22,13 @@ class UserRepositoryTest(
 
             val actual = userRepository.save(newUser(id = 0L))
 
-            it("id 는 0 이 아니아어야 한다.") {
+            it("id 는 0 이 아니어야 한다.") {
                 actual.id shouldNotBe 0L
+            }
+
+            it("createdAt,modifiedAt 은 LocalDateTime.MIN 이 아니어야 한다") {
+                actual.createdAt shouldNotBe LocalDateTime.MIN
+                actual.modifiedAt shouldNotBe LocalDateTime.MIN
             }
 
         }
