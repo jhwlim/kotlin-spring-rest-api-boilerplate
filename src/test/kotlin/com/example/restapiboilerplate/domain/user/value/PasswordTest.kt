@@ -12,12 +12,8 @@ class PasswordTest : DescribeSpec({
 
         context("숫자가 주어진 경우") {
 
-            it("예외가 발생하지 않아야 한다") {
-
-                shouldNotThrowAny {
-                    Password("1234567890")
-                }
-
+            it("예외가 발생하지 않아야 한다.") {
+                shouldNotThrowAny { Password("1234567890") }
             }
 
         }
@@ -31,11 +27,7 @@ class PasswordTest : DescribeSpec({
             ) { description, value ->
 
                 it("$description - 예외가 발생해야 한다.") {
-
-                    shouldThrowIllegalArgumentExceptionWithMessage("비밀번호 형식이 올바르지 않습니다.") {
-                        Password(value)
-                    }
-
+                    shouldThrowIllegalArgumentExceptionWithMessage("비밀번호 형식이 올바르지 않습니다.") { Password(value) }
                 }
 
             }

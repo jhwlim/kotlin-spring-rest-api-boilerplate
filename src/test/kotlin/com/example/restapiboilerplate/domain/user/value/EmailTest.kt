@@ -18,11 +18,7 @@ class EmailTest : DescribeSpec({
             ) { description, value ->
 
                 it("$description - 예외가 발생하지 않아야 한다.") {
-
-                    shouldNotThrowAny {
-                        Email(value)
-                    }
-
+                    shouldNotThrowAny { Email(value) }
                 }
 
             }
@@ -39,11 +35,7 @@ class EmailTest : DescribeSpec({
             ) { description, value ->
 
                 it("$description - 예외가 발생해야 한다.") {
-
-                    shouldThrowIllegalArgumentExceptionWithMessage("이메일 형식이 올바르지 않습니다.") {
-                        Email(value)
-                    }
-
+                    shouldThrowIllegalArgumentExceptionWithMessage("이메일 형식이 올바르지 않습니다.") { Email(value) }
                 }
 
             }
