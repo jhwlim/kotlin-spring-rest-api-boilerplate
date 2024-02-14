@@ -1,4 +1,4 @@
-package com.example.restapiboilerplate.config
+package com.example.restapiboilerplate.infrastructure.jpa
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
