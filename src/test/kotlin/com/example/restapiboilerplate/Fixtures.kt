@@ -1,6 +1,7 @@
 package com.example.restapiboilerplate
 
 import com.example.restapiboilerplate.domain.user.aggregate.User
+import com.example.restapiboilerplate.domain.user.model.SignUpUserCommand
 import com.example.restapiboilerplate.domain.user.value.Email
 import com.example.restapiboilerplate.domain.user.value.Password
 import com.example.restapiboilerplate.domain.user.value.UserStatus
@@ -14,7 +15,7 @@ fun newUser(
     status: UserStatus = UserStatus.JOIN_REQUESTED,
     createdAt: LocalDateTime = LocalDateTime.MIN,
     modifiedAt: LocalDateTime = LocalDateTime.MIN,
-): User = User(
+) = User(
     id = id,
     name = name,
     email = Email(email),
@@ -22,4 +23,14 @@ fun newUser(
     status = status,
     createdAt = createdAt,
     modifiedAt = modifiedAt,
+)
+
+fun newSignUpUserCommand(
+    name: String = "테스트",
+    email: String = "test1234@test.com",
+    password: String = "1234",
+) = SignUpUserCommand(
+    name = name,
+    email = Email(email),
+    password = Password(password)
 )
