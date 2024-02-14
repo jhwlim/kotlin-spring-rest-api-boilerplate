@@ -2,9 +2,11 @@ package com.example.restapiboilerplate.domain.user.repository
 
 import com.example.restapiboilerplate.SpringIntegrationTest
 import com.example.restapiboilerplate.config.JpaConfig
+import com.example.restapiboilerplate.domain.user.value.Email
 import com.example.restapiboilerplate.newUser
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
@@ -54,6 +56,32 @@ class UserRepositoryTest(
 
         }
 
+    }
+
+    describe("findByEmail") {
+
+        val email = "test1234@test.com"
+        userRepository.save(newUser(email = email))
+
+        context("이메일이 이미 저장된 경우") {
+
+            val actual = userRepository.findByEmail(Email(email))
+
+            it("null 을 반환하면 안된다.") {
+                actual shouldNotBe null
+            }
+
+        }
+
+        context("이메일이 저장되어 있지 않으면") {
+
+            val actual = userRepository.findByEmail(Email("test1235@test.com"))
+
+            it("null 을 반환해야 한다.") {
+                actual shouldBe null
+            }
+
+        }
     }
 
 })
