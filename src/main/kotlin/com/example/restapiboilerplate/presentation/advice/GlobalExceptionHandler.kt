@@ -1,8 +1,10 @@
 package com.example.restapiboilerplate.presentation.advice
 
 import com.example.restapiboilerplate.application.exception.ValidationException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -16,6 +18,16 @@ class GlobalExceptionHandler {
     fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         log.warn { e }
         return toErrorResponse(errorType = ErrorType.BAD_REQUEST, message = e.bindingResult.fieldErrors.firstOrNull()?.defaultMessage)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleMismatchedInputException(e: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
+        log.warn { e }
+        val errorMessage = when(val cause = e.cause) {
+            is MismatchedInputException -> cause.path.firstOrNull()?.fieldName?.let { "$it 이 null 입니다." }
+            else -> null
+        }
+        return toErrorResponse(errorType = ErrorType.BAD_REQUEST, message = errorMessage)
     }
 
     @ExceptionHandler(ValidationException::class)
