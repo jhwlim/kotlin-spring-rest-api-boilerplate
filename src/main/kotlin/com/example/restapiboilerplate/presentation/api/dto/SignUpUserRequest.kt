@@ -2,7 +2,6 @@ package com.example.restapiboilerplate.presentation.api.dto
 
 import com.example.restapiboilerplate.domain.user.model.SignUpUserCommand
 import com.example.restapiboilerplate.domain.user.value.Email
-import com.example.restapiboilerplate.domain.user.value.Password
 import jakarta.validation.constraints.NotBlank
 
 data class SignUpUserRequest(
@@ -19,7 +18,7 @@ data class SignUpUserRequest(
         return SignUpUserCommand(
             name = name,
             email = Email(email),
-            password = Password(password),
+            rawPassword = password,
         )
     }
 

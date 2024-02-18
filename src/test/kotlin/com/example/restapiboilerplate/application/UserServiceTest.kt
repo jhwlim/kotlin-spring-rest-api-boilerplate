@@ -10,16 +10,19 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.every
 import io.mockk.mockk
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.security.crypto.password.PasswordEncoder
 
 class UserServiceTest : DescribeSpec({
 
     val userValidator = mockk<UserValidator>()
     val userRepository = mockk<UserRepository>()
     val eventPublisher = mockk<ApplicationEventPublisher>()
+    val passwordEncoder = mockk<PasswordEncoder>()
     val userService = UserService(
         userValidator,
         userRepository,
         eventPublisher,
+        passwordEncoder,
     )
 
     describe("signUp") {
@@ -27,8 +30,9 @@ class UserServiceTest : DescribeSpec({
         context("User 등록에 문제가 없는 경우") {
 
             val command = newSignUpUserCommand()
-            val savedUser = newUser(id = 1L)
+            val savedUser = newUser(id = 1L, password = "abcd")
             every { userValidator.validateSignUpUserCommand(command) } answers {}
+            every { passwordEncoder.encode(command.rawPassword) } answers { "abcd" }
             every { userRepository.save(any()) } answers { savedUser }
             every { eventPublisher.publishEvent(UserSignedUpEvent(userId = 1L)) } answers {}
 

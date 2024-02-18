@@ -66,7 +66,7 @@ fun newSignUpUserCommand(
 ) = SignUpUserCommand(
     name = name,
     email = Email(email),
-    password = Password(password)
+    rawPassword = password,
 )
 
 fun newSignUpUserRequest(
