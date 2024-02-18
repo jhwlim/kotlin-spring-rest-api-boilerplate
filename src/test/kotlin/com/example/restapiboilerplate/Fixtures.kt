@@ -13,7 +13,7 @@ private const val defaultUserId = 1L
 private const val defaultUserName = "테스트"
 private const val defaultUserEmailValue = "test1234@test.com"
 private const val defaultUserPasswordValue = "1234"
-private val defaultUserStatus = UserStatus.JOIN_REQUESTED
+private val defaultUserStatus = UserStatus.BEFORE_EMAIL_CHECK
 private val defaultCreatedAt = LocalDateTime.MIN
 private val defaultModifiedAt = LocalDateTime.MIN
 

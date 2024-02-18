@@ -15,7 +15,7 @@ data class SignUpUserCommand(
         name = name,
         password = password,
         email = email,
-        status = UserStatus.JOIN_REQUESTED
+        status = UserStatus.BEFORE_EMAIL_CHECK
     )
 
 }

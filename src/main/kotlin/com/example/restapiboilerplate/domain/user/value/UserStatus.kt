@@ -1,7 +1,7 @@
 package com.example.restapiboilerplate.domain.user.value
 
 enum class UserStatus {
-    JOIN_REQUESTED,
-    JOIN_COMPLETED,
+    BEFORE_EMAIL_CHECK,
+    EMAIL_CHECK_COMPLETED,
     ;
 }
