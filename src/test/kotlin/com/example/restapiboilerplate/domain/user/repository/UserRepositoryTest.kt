@@ -1,7 +1,7 @@
 package com.example.restapiboilerplate.domain.user.repository
 
 import com.example.restapiboilerplate.SpringIntegrationTest
-import com.example.restapiboilerplate.infrastructure.jpa.JpaConfig
+import com.example.restapiboilerplate.config.JpaConfig
 import com.example.restapiboilerplate.domain.user.value.Email
 import com.example.restapiboilerplate.newUser
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder

@@ -3,8 +3,8 @@ package com.example.restapiboilerplate.presentation.api
 import com.example.restapiboilerplate.*
 import com.example.restapiboilerplate.application.UserService
 import com.example.restapiboilerplate.application.exception.ValidationException
+import com.example.restapiboilerplate.config.SecurityConfig
 import com.example.restapiboilerplate.presentation.advice.ErrorResponse
-import com.example.restapiboilerplate.presentation.api.dto.SignUpUserRequest
 import com.example.restapiboilerplate.presentation.api.dto.UserResponse
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
@@ -13,11 +13,13 @@ import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
 
 @WebMvcTest(UserController::class)
+@Import(SecurityConfig::class)
 class UserControllerTest(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
