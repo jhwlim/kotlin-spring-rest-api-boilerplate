@@ -1,0 +1,7 @@
+package com.example.restapiboilerplate.infrastructure.jpa
+
+import com.example.restapiboilerplate.domain.user.aggregate.UserEmailVerification
+import com.example.restapiboilerplate.domain.user.repository.UserEmailVerificationRepository
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface UserEmailVerificationJpaRepository : JpaRepository<UserEmailVerification, Long>, UserEmailVerificationRepository

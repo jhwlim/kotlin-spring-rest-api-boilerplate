@@ -1,21 +1,24 @@
 package com.example.restapiboilerplate
 
+import com.example.restapiboilerplate.TestConstants.DEFAULT_CREATED_AT
+import com.example.restapiboilerplate.TestConstants.DEFAULT_DATE_TIME
+import com.example.restapiboilerplate.TestConstants.DEFAULT_MODIFIED_AT
+import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_EMAIL_VALUE
+import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE
+import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_ID
+import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_NAME
+import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_PASSWORD_VALUE
+import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_STATUS
 import com.example.restapiboilerplate.application.dto.UserDto
 import com.example.restapiboilerplate.domain.user.aggregate.User
+import com.example.restapiboilerplate.domain.user.aggregate.UserEmailVerification
 import com.example.restapiboilerplate.domain.user.model.SignUpUserCommand
 import com.example.restapiboilerplate.domain.user.value.Email
 import com.example.restapiboilerplate.domain.user.value.Password
+import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
 import com.example.restapiboilerplate.domain.user.value.UserStatus
 import com.example.restapiboilerplate.presentation.api.dto.UserResponse
 import java.time.LocalDateTime
-
-private const val defaultUserId = 1L
-private const val defaultUserName = "테스트"
-private const val defaultUserEmailValue = "test1234@test.com"
-private const val defaultUserPasswordValue = "1234"
-private val defaultUserStatus = UserStatus.BEFORE_EMAIL_CHECK
-private val defaultCreatedAt = LocalDateTime.MIN
-private val defaultModifiedAt = LocalDateTime.MIN
 
 class SignUpUserRequestWithNull(
     val name: String?,
@@ -25,12 +28,12 @@ class SignUpUserRequestWithNull(
 
 fun newUser(
     id: Long = 0L,
-    name: String = defaultUserName,
-    email: String = defaultUserEmailValue,
-    password: String = defaultUserPasswordValue,
-    status: UserStatus = defaultUserStatus,
-    createdAt: LocalDateTime = defaultCreatedAt,
-    modifiedAt: LocalDateTime = defaultModifiedAt,
+    name: String = DEFAULT_USER_NAME,
+    email: String = DEFAULT_USER_EMAIL_VALUE,
+    password: String = DEFAULT_USER_PASSWORD_VALUE,
+    status: UserStatus = DEFAULT_USER_STATUS,
+    createdAt: LocalDateTime = DEFAULT_CREATED_AT,
+    modifiedAt: LocalDateTime = DEFAULT_MODIFIED_AT,
 ) = User(
     id = id,
     name = name,
@@ -42,13 +45,13 @@ fun newUser(
 )
 
 fun newUserDto(
-    id: Long = defaultUserId,
-    name: String = defaultUserName,
-    email: String = defaultUserEmailValue,
-    password: String = defaultUserPasswordValue,
-    status: UserStatus = defaultUserStatus,
-    createdAt: LocalDateTime = defaultCreatedAt,
-    modifiedAt: LocalDateTime = defaultModifiedAt,
+    id: Long = DEFAULT_USER_ID,
+    name: String = DEFAULT_USER_NAME,
+    email: String = DEFAULT_USER_EMAIL_VALUE,
+    password: String = DEFAULT_USER_PASSWORD_VALUE,
+    status: UserStatus = DEFAULT_USER_STATUS,
+    createdAt: LocalDateTime = DEFAULT_CREATED_AT,
+    modifiedAt: LocalDateTime = DEFAULT_MODIFIED_AT,
 ) = UserDto(
     id = id,
     name = name,
@@ -60,9 +63,9 @@ fun newUserDto(
 )
 
 fun newSignUpUserCommand(
-    name: String = defaultUserName,
-    email: String = defaultUserEmailValue,
-    password: String = defaultUserPasswordValue,
+    name: String = DEFAULT_USER_NAME,
+    email: String = DEFAULT_USER_EMAIL_VALUE,
+    password: String = DEFAULT_USER_PASSWORD_VALUE,
 ) = SignUpUserCommand(
     name = name,
     email = Email(email),
@@ -70,9 +73,9 @@ fun newSignUpUserCommand(
 )
 
 fun newSignUpUserRequest(
-    name: String? = defaultUserName,
-    email: String? = defaultUserEmailValue,
-    password: String? = defaultUserPasswordValue,
+    name: String? = DEFAULT_USER_NAME,
+    email: String? = DEFAULT_USER_EMAIL_VALUE,
+    password: String? = DEFAULT_USER_PASSWORD_VALUE,
 ) = SignUpUserRequestWithNull(
     name = name,
     email = email,
@@ -80,12 +83,12 @@ fun newSignUpUserRequest(
 )
 
 fun newUserResponse(
-    id: Long = defaultUserId,
-    name: String = defaultUserName,
-    email: String = defaultUserEmailValue,
-    status: UserStatus = defaultUserStatus,
-    createdAt: LocalDateTime = defaultCreatedAt,
-    modifiedAt: LocalDateTime = defaultModifiedAt,
+    id: Long = DEFAULT_USER_ID,
+    name: String = DEFAULT_USER_NAME,
+    email: String = DEFAULT_USER_EMAIL_VALUE,
+    status: UserStatus = DEFAULT_USER_STATUS,
+    createdAt: LocalDateTime = DEFAULT_CREATED_AT,
+    modifiedAt: LocalDateTime = DEFAULT_MODIFIED_AT,
 ) = UserResponse(
     id = id,
     name = name,
@@ -94,3 +97,15 @@ fun newUserResponse(
     createdAt = createdAt,
     modifiedAt = modifiedAt,
 )
+
+fun newUserEmailVerification(
+    user: User,
+    token: String = DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE,
+    publishedAt: LocalDateTime = DEFAULT_DATE_TIME,
+): UserEmailVerification {
+    return UserEmailVerification(
+        token = UserEmailVerificationToken(token),
+        publishedAt = publishedAt,
+        user = user,
+    )
+}
