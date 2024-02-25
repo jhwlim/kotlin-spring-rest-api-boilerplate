@@ -9,6 +9,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.context.annotation.Import
 import java.time.LocalDateTime
 
@@ -16,6 +17,7 @@ import java.time.LocalDateTime
 @DataJpaTest
 class UserRepositoryTest(
     private val userRepository: UserRepository,
+    private val entityManager: TestEntityManager,
 ) : SpringIntegrationTest({
 
     describe("save") {
@@ -56,6 +58,31 @@ class UserRepositoryTest(
 
         }
 
+    }
+
+    describe("findById") {
+
+        val user = entityManager.persistAndFlush(newUser())
+
+        context("이메일이 이미 저장된 경우") {
+
+            val actual = userRepository.findById(user.id)
+
+            it("null 을 반환하면 안된다.") {
+                actual shouldNotBe null
+            }
+
+        }
+
+        context("이메일이 저장되어 있지 않으면") {
+
+            val actual = userRepository.findById(100000L)
+
+            it("null 을 반환해야 한다.") {
+                actual shouldBe null
+            }
+
+        }
     }
 
     describe("findByEmail") {
