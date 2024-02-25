@@ -7,7 +7,9 @@ import com.example.restapiboilerplate.domain.user.repository.UserEmailVerificati
 import com.example.restapiboilerplate.domain.user.repository.UserRepository
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
 import org.springframework.context.event.EventListener
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Component
@@ -17,7 +19,9 @@ class UserEventListener(
     private val userEmailVerificationSender: UserEmailVerificationSender,
 ) {
 
+    @Async
     @EventListener
+    @Transactional
     fun handleUserSignedUpEvent(event: UserSignedUpEvent) {
         val (userId) = event
         val user = userRepository.findById(userId) ?: throw NotFoundUserException(userId)
