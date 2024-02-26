@@ -1,8 +1,8 @@
 package com.example.restapiboilerplate.domain.user.event
 
-import com.example.restapiboilerplate.domain.common.exception.NotFoundUserException
 import com.example.restapiboilerplate.domain.user.aggregate.UserEmailVerification
 import com.example.restapiboilerplate.domain.user.component.UserEmailVerificationSender
+import com.example.restapiboilerplate.domain.user.exception.NotFoundUserException
 import com.example.restapiboilerplate.domain.user.repository.UserEmailVerificationRepository
 import com.example.restapiboilerplate.domain.user.repository.UserRepository
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
