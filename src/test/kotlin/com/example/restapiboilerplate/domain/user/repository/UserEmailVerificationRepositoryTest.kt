@@ -11,6 +11,7 @@ import com.example.restapiboilerplate.newUser
 import com.example.restapiboilerplate.newUserEmailVerification
 import io.kotest.matchers.reflection.beConst
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.context.annotation.Import
@@ -57,6 +58,39 @@ class UserEmailVerificationRepositoryTest(
                 actual.user.id shouldBe user.id
                 actual.user.name shouldBe user.name
                 actual.user.email shouldBe user.email
+            }
+
+        }
+
+    }
+
+    describe("findByToken") {
+
+        val user = entityManager.persistAndFlush(newUser())
+        entityManager.persistAndFlush(newUserEmailVerification(user = user))
+
+        entityManager.clear()
+
+        context("저장된 token 이 존재하면") {
+
+            val token = UserEmailVerificationToken(DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE)
+
+            val actual = userEmailVerificationRepository.findByToken(token)
+
+            it("null 을 반환하면 안된다.") {
+                actual shouldNotBe null
+            }
+
+        }
+
+        context("저장된 token 이 존재하지 않으면") {
+
+            val notExistedToken = UserEmailVerificationToken("${DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE}_1")
+
+            val actual = userEmailVerificationRepository.findByToken(notExistedToken)
+
+            it("null 을 반환해야 한다.") {
+                actual shouldBe null
             }
 
         }
