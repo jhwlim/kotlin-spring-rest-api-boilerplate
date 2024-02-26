@@ -1,5 +1,8 @@
 package com.example.restapiboilerplate.domain.user.aggregate
 
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureType.EXPIRED_TOKEN
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureType.NOT_MATCHED_TOKEN
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -7,9 +10,9 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "user_email_verifications")
 class UserEmailVerification(
+    @Column(unique = true)
     var token: UserEmailVerificationToken,
-    var verified: Boolean = false,
-    var publishedAt: LocalDateTime,
+    var expiredAt: LocalDateTime,
     var verifiedAt: LocalDateTime? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +23,19 @@ class UserEmailVerification(
     @MapsId
     @JoinColumn(name = "user_id")
     var user: User,
-)
+) {
+
+    fun verified(): Boolean = verifiedAt != null
+
+    fun verify(token: UserEmailVerificationToken, current: LocalDateTime) {
+        checkToken(token, current)
+
+        this.verifiedAt = current
+    }
+
+    private fun checkToken(token: UserEmailVerificationToken, current: LocalDateTime) {
+        if (this.token != token) { throw VerifyUserEmailFailureException(NOT_MATCHED_TOKEN) }
+        if (this.expiredAt < current) { throw VerifyUserEmailFailureException(EXPIRED_TOKEN) }
+    }
+
+}

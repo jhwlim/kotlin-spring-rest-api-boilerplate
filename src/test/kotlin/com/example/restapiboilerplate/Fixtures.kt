@@ -101,11 +101,13 @@ fun newUserResponse(
 fun newUserEmailVerification(
     user: User,
     token: String = DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE,
-    publishedAt: LocalDateTime = DEFAULT_DATE_TIME,
+    expiredAt: LocalDateTime = DEFAULT_DATE_TIME,
+    verifiedAt: LocalDateTime? = null,
 ): UserEmailVerification {
     return UserEmailVerification(
         token = UserEmailVerificationToken(token),
-        publishedAt = publishedAt,
+        expiredAt = expiredAt,
         user = user,
+        verifiedAt = verifiedAt,
     )
 }

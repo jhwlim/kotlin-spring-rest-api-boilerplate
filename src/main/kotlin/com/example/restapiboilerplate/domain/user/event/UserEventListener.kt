@@ -29,7 +29,7 @@ class UserEventListener(
             UserEmailVerification(
                 user = user,
                 token = UserEmailVerificationToken(),
-                publishedAt = LocalDateTime.now(),
+                expiredAt = LocalDateTime.now().plusHours(1L),
             )
         )
 
