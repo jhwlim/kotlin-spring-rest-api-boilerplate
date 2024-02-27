@@ -10,7 +10,6 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "user_email_verifications")
 class UserEmailVerification(
-    @Column(unique = true)
     var token: UserEmailVerificationToken,
     var expiredAt: LocalDateTime,
     var verifiedAt: LocalDateTime? = null,
