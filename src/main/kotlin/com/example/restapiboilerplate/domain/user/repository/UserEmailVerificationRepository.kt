@@ -7,7 +7,7 @@ interface UserEmailVerificationRepository {
 
     fun save(userEmailVerification: UserEmailVerification): UserEmailVerification
 
-    fun findById(id: Long): UserEmailVerification
+    fun findById(id: Long): UserEmailVerification?
 
     fun findByToken(token: UserEmailVerificationToken): UserEmailVerification?
 
