@@ -41,7 +41,7 @@ class UserService(
             emailVerification.verify(token, LocalDateTime.now())
 
             UserEmailVerificationResultDto.success()
-        }.onFailure { e ->
+        }.recover { e ->
             when (e) {
                 is VerifyUserEmailFailureException -> UserEmailVerificationResultDto.failure(e)
                 else -> throw e
