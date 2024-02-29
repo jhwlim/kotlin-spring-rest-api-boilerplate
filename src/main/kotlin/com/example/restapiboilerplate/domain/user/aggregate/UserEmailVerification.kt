@@ -1,8 +1,8 @@
 package com.example.restapiboilerplate.domain.user.aggregate
 
 import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureType.EXPIRED_TOKEN
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureType.NOT_MATCHED_TOKEN
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.EXPIRED_TOKEN
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.NOT_MATCHED_TOKEN
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
 import jakarta.persistence.*
 import java.time.LocalDateTime

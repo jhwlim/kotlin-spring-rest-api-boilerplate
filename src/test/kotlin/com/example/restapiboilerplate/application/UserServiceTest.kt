@@ -1,11 +1,11 @@
 package com.example.restapiboilerplate.application
 
 import com.example.restapiboilerplate.TestConstants.DEFAULT_DATE_TIME
-import com.example.restapiboilerplate.application.dto.UserEmailVerificationResultDto
 import com.example.restapiboilerplate.application.validator.UserValidator
 import com.example.restapiboilerplate.domain.user.event.UserSignedUpEvent
 import com.example.restapiboilerplate.domain.user.exception.NotFoundUserEmailVerificationException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureType
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType
 import com.example.restapiboilerplate.domain.user.repository.UserEmailVerificationRepository
 import com.example.restapiboilerplate.domain.user.repository.UserRepository
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
@@ -75,10 +75,8 @@ class UserServiceTest : DescribeSpec({
             every { userEmailVerificationRepository.findById(userId) } answers { savedUserEmailVerification }
             every { LocalDateTime.now() } answers { DEFAULT_DATE_TIME }
 
-            val actual = userService.verifyUserEmail(userId, token)
-
-            it("인증 성공 결과를 반환해야 한다.") {
-                actual shouldBe UserEmailVerificationResultDto.success()
+            it("예외가 발생하지 않아야 한다.") {
+                shouldNotThrowAny { userService.verifyUserEmail(userId, token) }
             }
 
         }
@@ -100,8 +98,8 @@ class UserServiceTest : DescribeSpec({
         context("token 인증에 실패한 경우") {
 
             forAll(
-                row(VerifyUserEmailFailureType.NOT_MATCHED_TOKEN, UserEmailVerificationToken("test12"), DEFAULT_DATE_TIME),
-                row(VerifyUserEmailFailureType.EXPIRED_TOKEN, token, DEFAULT_DATE_TIME.plusNanos(1L)),
+                row(VerifyUserEmailFailureReasonType.NOT_MATCHED_TOKEN, UserEmailVerificationToken("test12"), DEFAULT_DATE_TIME),
+                row(VerifyUserEmailFailureReasonType.EXPIRED_TOKEN, token, DEFAULT_DATE_TIME.plusNanos(1L)),
             ) { expectedFailureType, token, current ->
 
                 every { userEmailVerificationRepository.findById(userId) } answers { savedUserEmailVerification }
@@ -109,10 +107,11 @@ class UserServiceTest : DescribeSpec({
 
                 context("인증 실패 타입 : ${expectedFailureType.name}") {
 
-                    val actual = userService.verifyUserEmail(userId, token)
-
-                    it("인증 실패 결과를 반환해야 한다.") {
-                        actual shouldBe UserEmailVerificationResultDto(false, expectedFailureType)
+                    it("예외가 발생해야 한다.") {
+                        val actualException = shouldThrow<VerifyUserEmailFailureException> {
+                            userService.verifyUserEmail(userId, token)
+                        }
+                        actualException shouldBe VerifyUserEmailFailureException(expectedFailureType)
                     }
 
                 }

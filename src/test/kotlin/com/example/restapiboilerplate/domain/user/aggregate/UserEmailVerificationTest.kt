@@ -1,11 +1,10 @@
 package com.example.restapiboilerplate.domain.user.aggregate
 
-import com.example.restapiboilerplate.TestConstants
 import com.example.restapiboilerplate.TestConstants.DEFAULT_DATE_TIME
 import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE
 import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureType.EXPIRED_TOKEN
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureType.NOT_MATCHED_TOKEN
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.EXPIRED_TOKEN
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.NOT_MATCHED_TOKEN
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
 import com.example.restapiboilerplate.newUser
 import com.example.restapiboilerplate.newUserEmailVerification

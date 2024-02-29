@@ -1,11 +1,9 @@
 package com.example.restapiboilerplate.application
 
 import com.example.restapiboilerplate.application.dto.UserDto
-import com.example.restapiboilerplate.application.dto.UserEmailVerificationResultDto
 import com.example.restapiboilerplate.application.validator.UserValidator
 import com.example.restapiboilerplate.domain.user.event.UserSignedUpEvent
 import com.example.restapiboilerplate.domain.user.exception.NotFoundUserEmailVerificationException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
 import com.example.restapiboilerplate.domain.user.model.SignUpUserCommand
 import com.example.restapiboilerplate.domain.user.repository.UserEmailVerificationRepository
 import com.example.restapiboilerplate.domain.user.repository.UserRepository
@@ -34,19 +32,10 @@ class UserService(
             .let { UserDto.from(it) }
     }
 
-    fun verifyUserEmail(userId: Long, token: UserEmailVerificationToken): UserEmailVerificationResultDto {
+    fun verifyUserEmail(userId: Long, token: UserEmailVerificationToken) {
         val emailVerification = userEmailVerificationRepository.findById(userId) ?: throw NotFoundUserEmailVerificationException(userId)
 
-        return runCatching {
-            emailVerification.verify(token, LocalDateTime.now())
-
-            UserEmailVerificationResultDto.success()
-        }.recover { e ->
-            when (e) {
-                is VerifyUserEmailFailureException -> UserEmailVerificationResultDto.failure(e)
-                else -> throw e
-            }
-        }.getOrThrow()
+        emailVerification.verify(token, LocalDateTime.now())
     }
 
 }
