@@ -3,8 +3,7 @@ package com.example.restapiboilerplate.domain.user.aggregate
 import com.example.restapiboilerplate.TestConstants.DEFAULT_DATE_TIME
 import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE
 import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.EXPIRED_TOKEN
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.NOT_MATCHED_TOKEN
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.*
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
 import com.example.restapiboilerplate.newUser
 import com.example.restapiboilerplate.newUserEmailVerification
@@ -54,6 +53,20 @@ class UserEmailVerificationTest : DescribeSpec({
 
             it("토큰의 증명 일자는 null 이 아니어야 한다.") {
                 userEmailVerification.verifiedAt shouldNotBe null
+            }
+
+        }
+
+        context("이미 인증된 이메일인 경우") {
+
+            val userEmailVerification = newUserEmailVerification(user = user, verifiedAt = DEFAULT_DATE_TIME)
+
+            val actual = shouldThrow<VerifyUserEmailFailureException> {
+                userEmailVerification.verify(token, current)
+            }
+
+            it("예외가 발생해야 한다.") {
+                actual shouldBe VerifyUserEmailFailureException(ALREADY_VERIFIED_EMAIL)
             }
 
         }

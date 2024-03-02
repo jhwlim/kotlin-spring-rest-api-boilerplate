@@ -1,8 +1,7 @@
 package com.example.restapiboilerplate.domain.user.aggregate
 
 import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.EXPIRED_TOKEN
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.NOT_MATCHED_TOKEN
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.*
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -33,6 +32,7 @@ class UserEmailVerification(
     }
 
     private fun checkToken(token: UserEmailVerificationToken, current: LocalDateTime) {
+        if (this.verified()) { throw VerifyUserEmailFailureException(ALREADY_VERIFIED_EMAIL)}
         if (this.token != token) { throw VerifyUserEmailFailureException(NOT_MATCHED_TOKEN) }
         if (this.expiredAt < current) { throw VerifyUserEmailFailureException(EXPIRED_TOKEN) }
     }

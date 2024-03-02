@@ -5,7 +5,7 @@ import com.example.restapiboilerplate.application.validator.UserValidator
 import com.example.restapiboilerplate.domain.user.event.UserSignedUpEvent
 import com.example.restapiboilerplate.domain.user.exception.NotFoundUserEmailVerificationException
 import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.*
 import com.example.restapiboilerplate.domain.user.repository.UserEmailVerificationRepository
 import com.example.restapiboilerplate.domain.user.repository.UserRepository
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
@@ -66,11 +66,12 @@ class UserServiceTest : DescribeSpec({
         val userId = 1L
         val user = newUser(id = userId)
         val token = UserEmailVerificationToken("test")
-        val savedUserEmailVerification = newUserEmailVerification(user = user, token = "test")
 
         mockkStatic(LocalDateTime::class)
 
         context("token 인증에 문제가 없는 경우") {
+
+            val savedUserEmailVerification = newUserEmailVerification(user = user, token = "test")
 
             every { userEmailVerificationRepository.findById(userId) } answers { savedUserEmailVerification }
             every { LocalDateTime.now() } answers { DEFAULT_DATE_TIME }
@@ -98,9 +99,12 @@ class UserServiceTest : DescribeSpec({
         context("token 인증에 실패한 경우") {
 
             forAll(
-                row(VerifyUserEmailFailureReasonType.NOT_MATCHED_TOKEN, UserEmailVerificationToken("test12"), DEFAULT_DATE_TIME),
-                row(VerifyUserEmailFailureReasonType.EXPIRED_TOKEN, token, DEFAULT_DATE_TIME.plusNanos(1L)),
-            ) { expectedFailureType, token, current ->
+                row(ALREADY_VERIFIED_EMAIL, token, DEFAULT_DATE_TIME, DEFAULT_DATE_TIME.minusNanos(1)),
+                row(NOT_MATCHED_TOKEN, UserEmailVerificationToken("test12"), DEFAULT_DATE_TIME, null),
+                row(EXPIRED_TOKEN, token, DEFAULT_DATE_TIME.plusNanos(1), null),
+            ) { expectedFailureType, token, current, verifiedAt ->
+
+                val savedUserEmailVerification = newUserEmailVerification(user = user, token = "test", verifiedAt = verifiedAt)
 
                 every { userEmailVerificationRepository.findById(userId) } answers { savedUserEmailVerification }
                 every { LocalDateTime.now() } answers { current }
