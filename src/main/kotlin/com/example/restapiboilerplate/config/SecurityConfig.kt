@@ -41,6 +41,7 @@ class SecurityConfig {
 
         private val PERMIT_ALL_PATHS = listOf(
             "/v1/users",
+            "/v1/users/*/verifyEmail",
         )
 
     }
