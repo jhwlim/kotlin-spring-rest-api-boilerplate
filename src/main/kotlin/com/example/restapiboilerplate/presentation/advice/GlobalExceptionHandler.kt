@@ -1,6 +1,6 @@
 package com.example.restapiboilerplate.presentation.advice
 
-import com.example.restapiboilerplate.application.exception.ValidationException
+import com.example.restapiboilerplate.domain.common.exception.BaseException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
@@ -30,10 +30,10 @@ class GlobalExceptionHandler {
         return toErrorResponse(errorType = ErrorType.BAD_REQUEST, message = errorMessage)
     }
 
-    @ExceptionHandler(ValidationException::class)
-    fun handleValidationException(e: ValidationException): ResponseEntity<ErrorResponse> {
+    @ExceptionHandler(BaseException::class)
+    fun handleValidationException(e: BaseException): ResponseEntity<ErrorResponse> {
         log.warn { e }
-        return toErrorResponse(errorType = ErrorType.BAD_REQUEST, message = e.message)
+        return toErrorResponse(errorType = ErrorType.from(e), message = e.message)
     }
 
     @ExceptionHandler(Exception::class)

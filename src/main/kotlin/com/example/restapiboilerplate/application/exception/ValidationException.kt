@@ -1,5 +1,5 @@
 package com.example.restapiboilerplate.application.exception
 
-class ValidationException(
-    override val message: String,
-) : RuntimeException()
+import com.example.restapiboilerplate.domain.common.exception.BaseException
+
+class ValidationException(message: String) : BaseException(message)
