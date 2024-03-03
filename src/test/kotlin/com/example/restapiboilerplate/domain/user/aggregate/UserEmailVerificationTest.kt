@@ -2,8 +2,10 @@ package com.example.restapiboilerplate.domain.user.aggregate
 
 import com.example.restapiboilerplate.TestConstants.DEFAULT_DATE_TIME
 import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE
+import com.example.restapiboilerplate.domain.user.exception.AlreadyVerifiedEmailException
+import com.example.restapiboilerplate.domain.user.exception.UserEmailTokenExpiredException
+import com.example.restapiboilerplate.domain.user.exception.UserEmailTokenNotMatchedException
 import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.*
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
 import com.example.restapiboilerplate.domain.user.value.UserStatus.EMAIL_CHECK_COMPLETED
 import com.example.restapiboilerplate.newUser
@@ -12,6 +14,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.types.shouldBeTypeOf
 
 class UserEmailVerificationTest : DescribeSpec({
 
@@ -68,12 +71,11 @@ class UserEmailVerificationTest : DescribeSpec({
             val user = newUser(id = 1L)
             val userEmailVerification = newUserEmailVerification(user = user, verifiedAt = DEFAULT_DATE_TIME)
 
-            val actual = shouldThrow<VerifyUserEmailFailureException> {
-                userEmailVerification.verify(token, current)
-            }
-
             it("예외가 발생해야 한다.") {
-                actual shouldBe VerifyUserEmailFailureException(ALREADY_VERIFIED_EMAIL)
+                val actualException = shouldThrow<VerifyUserEmailFailureException> {
+                    userEmailVerification.verify(token, current)
+                }
+                actualException.shouldBeTypeOf<AlreadyVerifiedEmailException>()
             }
 
         }
@@ -84,12 +86,11 @@ class UserEmailVerificationTest : DescribeSpec({
             val userEmailVerification = newUserEmailVerification(user = user)
             val differentToken = UserEmailVerificationToken("${DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE}_1")
 
-            val actual = shouldThrow<VerifyUserEmailFailureException> {
-                userEmailVerification.verify(differentToken, current)
-            }
-
             it("예외가 발생해야 한다.") {
-                actual shouldBe VerifyUserEmailFailureException(NOT_MATCHED_TOKEN)
+                val actualException = shouldThrow<VerifyUserEmailFailureException> {
+                    userEmailVerification.verify(differentToken, current)
+                }
+                actualException.shouldBeTypeOf<UserEmailTokenNotMatchedException>()
             }
 
         }
@@ -100,12 +101,11 @@ class UserEmailVerificationTest : DescribeSpec({
             val userEmailVerification = newUserEmailVerification(user = user)
             val afterExpiredAt = DEFAULT_DATE_TIME.plusNanos(1L)
 
-            val actual = shouldThrow<VerifyUserEmailFailureException> {
-                userEmailVerification.verify(token, afterExpiredAt)
-            }
-
             it("예외가 발생해야 한다.") {
-                actual shouldBe VerifyUserEmailFailureException(EXPIRED_TOKEN)
+                val actualException = shouldThrow<VerifyUserEmailFailureException> {
+                    userEmailVerification.verify(token, afterExpiredAt)
+                }
+                actualException.shouldBeTypeOf<UserEmailTokenExpiredException>()
             }
 
         }

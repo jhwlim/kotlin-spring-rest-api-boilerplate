@@ -2,8 +2,15 @@ package com.example.restapiboilerplate.domain.user.exception
 
 import com.example.restapiboilerplate.domain.common.exception.FailureException
 import com.example.restapiboilerplate.domain.common.exception.FailureReasonType
+import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.*
 
-data class VerifyUserEmailFailureException(private val type: VerifyUserEmailFailureReasonType) : FailureException(type)
+open class VerifyUserEmailFailureException(type: VerifyUserEmailFailureReasonType) : FailureException(type)
+
+class AlreadyVerifiedEmailException : VerifyUserEmailFailureException(ALREADY_VERIFIED_EMAIL)
+
+class UserEmailTokenNotMatchedException : VerifyUserEmailFailureException(NOT_MATCHED_TOKEN)
+
+class UserEmailTokenExpiredException : VerifyUserEmailFailureException(EXPIRED_TOKEN)
 
 enum class VerifyUserEmailFailureReasonType(
     override val message: String,

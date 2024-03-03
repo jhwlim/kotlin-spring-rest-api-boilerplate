@@ -3,9 +3,7 @@ package com.example.restapiboilerplate.application
 import com.example.restapiboilerplate.TestConstants.DEFAULT_DATE_TIME
 import com.example.restapiboilerplate.application.validator.UserValidator
 import com.example.restapiboilerplate.domain.user.event.UserSignedUpEvent
-import com.example.restapiboilerplate.domain.user.exception.NotFoundUserEmailVerificationException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.*
+import com.example.restapiboilerplate.domain.user.exception.*
 import com.example.restapiboilerplate.domain.user.repository.UserEmailVerificationRepository
 import com.example.restapiboilerplate.domain.user.repository.UserRepository
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
@@ -99,23 +97,23 @@ class UserServiceTest : DescribeSpec({
         context("token 인증에 실패한 경우") {
 
             forAll(
-                row(ALREADY_VERIFIED_EMAIL, token, DEFAULT_DATE_TIME, DEFAULT_DATE_TIME.minusNanos(1)),
-                row(NOT_MATCHED_TOKEN, UserEmailVerificationToken("test12"), DEFAULT_DATE_TIME, null),
-                row(EXPIRED_TOKEN, token, DEFAULT_DATE_TIME.plusNanos(1), null),
-            ) { expectedFailureType, token, current, verifiedAt ->
+                row(AlreadyVerifiedEmailException(), token, DEFAULT_DATE_TIME, DEFAULT_DATE_TIME.minusNanos(1)),
+                row(UserEmailTokenNotMatchedException(), UserEmailVerificationToken("test12"), DEFAULT_DATE_TIME, null),
+                row(UserEmailTokenExpiredException(), token, DEFAULT_DATE_TIME.plusNanos(1), null),
+            ) { expectedException, token, current, verifiedAt ->
 
                 val savedUserEmailVerification = newUserEmailVerification(user = user, token = "test", verifiedAt = verifiedAt)
 
                 every { userEmailVerificationRepository.findById(userId) } answers { savedUserEmailVerification }
                 every { LocalDateTime.now() } answers { current }
 
-                context("인증 실패 타입 : ${expectedFailureType.name}") {
+                context("인증 실패 타입 : ${expectedException.message}") {
 
                     it("예외가 발생해야 한다.") {
                         val actualException = shouldThrow<VerifyUserEmailFailureException> {
                             userService.verifyUserEmail(userId, token)
                         }
-                        actualException shouldBe VerifyUserEmailFailureException(expectedFailureType)
+                        actualException shouldBe expectedException
                     }
 
                 }
