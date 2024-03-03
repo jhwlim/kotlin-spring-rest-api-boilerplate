@@ -3,6 +3,7 @@ package com.example.restapiboilerplate.domain.user.aggregate
 import com.example.restapiboilerplate.domain.user.value.Email
 import com.example.restapiboilerplate.domain.user.value.Password
 import com.example.restapiboilerplate.domain.user.value.UserStatus
+import com.example.restapiboilerplate.domain.user.value.UserStatus.EMAIL_CHECK_COMPLETED
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -24,4 +25,18 @@ class User(
     var createdAt: LocalDateTime = LocalDateTime.MIN,
     @LastModifiedDate
     var modifiedAt: LocalDateTime = LocalDateTime.MIN,
-)
+) {
+
+    fun verifyEmail() {
+        validateBeforeVerifyEmail()
+
+        this.status = EMAIL_CHECK_COMPLETED
+    }
+
+    private fun validateBeforeVerifyEmail() {
+        if (isAlreadyVerifiedEmail()) { throw IllegalStateException("User Email is already verified") }
+    }
+
+    private fun isAlreadyVerifiedEmail(): Boolean = status == EMAIL_CHECK_COMPLETED
+
+}

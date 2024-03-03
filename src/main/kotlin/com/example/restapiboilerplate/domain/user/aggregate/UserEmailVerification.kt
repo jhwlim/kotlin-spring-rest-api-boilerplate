@@ -26,15 +26,16 @@ class UserEmailVerification(
     fun verified(): Boolean = verifiedAt != null
 
     fun verify(token: UserEmailVerificationToken, current: LocalDateTime) {
-        checkToken(token, current)
+        validateBeforeVerify(token, current)
 
         this.verifiedAt = current
+        this.user.verifyEmail()
     }
 
-    private fun checkToken(token: UserEmailVerificationToken, current: LocalDateTime) {
-        if (this.verified()) { throw VerifyUserEmailFailureException(ALREADY_VERIFIED_EMAIL)}
+    private fun validateBeforeVerify(token: UserEmailVerificationToken, current: LocalDateTime) {
+        if (verified()) { throw VerifyUserEmailFailureException(ALREADY_VERIFIED_EMAIL) }
         if (this.token != token) { throw VerifyUserEmailFailureException(NOT_MATCHED_TOKEN) }
-        if (this.expiredAt < current) { throw VerifyUserEmailFailureException(EXPIRED_TOKEN) }
+        if (expiredAt < current) { throw VerifyUserEmailFailureException(EXPIRED_TOKEN) }
     }
 
 }

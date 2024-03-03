@@ -5,6 +5,7 @@ import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_EMAIL_VERIFICAT
 import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
 import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureReasonType.*
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
+import com.example.restapiboilerplate.domain.user.value.UserStatus.EMAIL_CHECK_COMPLETED
 import com.example.restapiboilerplate.newUser
 import com.example.restapiboilerplate.newUserEmailVerification
 import io.kotest.assertions.throwables.shouldThrow
@@ -14,12 +15,11 @@ import io.kotest.matchers.shouldNotBe
 
 class UserEmailVerificationTest : DescribeSpec({
 
-    val user = newUser(id = 1L)
-
     describe("verified") {
 
         context("증명 일자가 null 인 경우") {
 
+            val user = newUser(id = 1L)
             val userEmailVerification = newUserEmailVerification(user = user)
 
             it("증명 여부는 false 여야 한다.") {
@@ -30,6 +30,7 @@ class UserEmailVerificationTest : DescribeSpec({
 
         context("증명 일자가 있는 경우") {
 
+            val user = newUser(id = 1L)
             val userEmailVerification = newUserEmailVerification(user = user, verifiedAt = DEFAULT_DATE_TIME.plusSeconds(1L))
 
             it("증명 여부는 true 여야 한다.") {
@@ -47,6 +48,7 @@ class UserEmailVerificationTest : DescribeSpec({
 
         context("토큰 증명에 문제가 없는 경우") {
 
+            val user = newUser(id = 1L)
             val userEmailVerification = newUserEmailVerification(user = user)
 
             userEmailVerification.verify(token, current)
@@ -55,10 +57,15 @@ class UserEmailVerificationTest : DescribeSpec({
                 userEmailVerification.verifiedAt shouldNotBe null
             }
 
+            it("User 는 이메일 인증 상태여야 한다.") {
+                userEmailVerification.user.status shouldBe EMAIL_CHECK_COMPLETED
+            }
+
         }
 
         context("이미 인증된 이메일인 경우") {
 
+            val user = newUser(id = 1L)
             val userEmailVerification = newUserEmailVerification(user = user, verifiedAt = DEFAULT_DATE_TIME)
 
             val actual = shouldThrow<VerifyUserEmailFailureException> {
@@ -73,6 +80,7 @@ class UserEmailVerificationTest : DescribeSpec({
 
         context("토큰이 일치하지 않는 경우") {
 
+            val user = newUser(id = 1L)
             val userEmailVerification = newUserEmailVerification(user = user)
             val differentToken = UserEmailVerificationToken("${DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE}_1")
 
@@ -88,6 +96,7 @@ class UserEmailVerificationTest : DescribeSpec({
 
         context("토큰이 만료된 경우") {
 
+            val user = newUser(id = 1L)
             val userEmailVerification = newUserEmailVerification(user = user)
             val afterExpiredAt = DEFAULT_DATE_TIME.plusNanos(1L)
 
