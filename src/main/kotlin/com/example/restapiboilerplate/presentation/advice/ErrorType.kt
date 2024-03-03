@@ -2,10 +2,7 @@ package com.example.restapiboilerplate.presentation.advice
 
 import com.example.restapiboilerplate.application.exception.ValidationException
 import com.example.restapiboilerplate.domain.common.exception.BaseException
-import com.example.restapiboilerplate.domain.user.exception.AlreadyVerifiedEmailException
-import com.example.restapiboilerplate.domain.user.exception.UserEmailTokenExpiredException
-import com.example.restapiboilerplate.domain.user.exception.UserEmailTokenNotMatchedException
-import com.example.restapiboilerplate.domain.user.exception.VerifyUserEmailFailureException
+import com.example.restapiboilerplate.domain.user.exception.*
 import org.springframework.http.HttpStatus
 import kotlin.reflect.KClass
 
@@ -15,6 +12,10 @@ enum class ErrorType(
     val httpStatus: HttpStatus,
     private val exceptions: List<KClass<out BaseException>> = emptyList()
 ) {
+
+    NOT_FOUND_USER_EMAIL_VERIFICATION(102, "이메일 인증 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND, listOf(
+        NotFoundUserEmailVerificationException::class,
+    )),
 
     VERIFY_USER_EMAIL_FAILED(120, "이메일 인증에 실패하였습니다.", HttpStatus.BAD_REQUEST, listOf(
         VerifyUserEmailFailureException::class,
