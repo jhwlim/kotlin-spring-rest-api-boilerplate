@@ -2,7 +2,6 @@ package com.example.restapiboilerplate.application
 
 import com.example.restapiboilerplate.TestConstants.DEFAULT_DATE_TIME
 import com.example.restapiboilerplate.application.validator.UserValidator
-import com.example.restapiboilerplate.domain.user.event.UserSignedUpEvent
 import com.example.restapiboilerplate.domain.user.exception.*
 import com.example.restapiboilerplate.domain.user.repository.UserEmailVerificationRepository
 import com.example.restapiboilerplate.domain.user.repository.UserRepository
@@ -19,7 +18,6 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDateTime
 
@@ -27,13 +25,11 @@ class UserServiceTest : DescribeSpec({
 
     val userValidator = mockk<UserValidator>()
     val userRepository = mockk<UserRepository>()
-    val eventPublisher = mockk<ApplicationEventPublisher>()
     val passwordEncoder = mockk<PasswordEncoder>()
     val userEmailVerificationRepository = mockk<UserEmailVerificationRepository>()
     val userService = UserService(
         userValidator,
         userRepository,
-        eventPublisher,
         passwordEncoder,
         userEmailVerificationRepository,
     )
@@ -49,7 +45,6 @@ class UserServiceTest : DescribeSpec({
             every { userValidator.validateSignUpUserCommand(command) } answers {}
             every { passwordEncoder.encode(command.rawPassword) } answers { "abcd" }
             every { userRepository.save(any()) } answers { savedUser }
-            every { eventPublisher.publishEvent(UserSignedUpEvent(userId = userId)) } answers {}
 
             it("예외가 발생하지 않아야 한다.") {
                 shouldNotThrowAny { userService.signUp(command) }

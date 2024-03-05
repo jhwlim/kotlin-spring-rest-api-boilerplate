@@ -3,9 +3,11 @@ package com.example.restapiboilerplate.presentation.api
 import com.example.restapiboilerplate.*
 import com.example.restapiboilerplate.TestConstants.DEFAULT_EXCEPTION_MESSAGE
 import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE
+import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_ID
 import com.example.restapiboilerplate.application.UserService
 import com.example.restapiboilerplate.application.exception.ValidationException
 import com.example.restapiboilerplate.config.SecurityConfig
+import com.example.restapiboilerplate.domain.user.event.UserSignedUpEvent
 import com.example.restapiboilerplate.domain.user.exception.AlreadyVerifiedEmailException
 import com.example.restapiboilerplate.domain.user.exception.NotFoundUserEmailVerificationException
 import com.example.restapiboilerplate.domain.user.exception.UserEmailTokenExpiredException
@@ -15,11 +17,13 @@ import com.example.restapiboilerplate.presentation.advice.ErrorResponse
 import com.example.restapiboilerplate.presentation.api.dto.UserResponse
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import com.ninjasquad.springmockk.SpykBean
 import io.kotest.data.forAll
 import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
@@ -27,12 +31,14 @@ import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
 @WebMvcTest(UserController::class)
-@Import(SecurityConfig::class)
+@Import(SecurityConfig::class, TestConfig::class)
 class UserControllerTest(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
     @MockkBean
     private val userService: UserService,
+    @SpykBean
+    private val eventPublisher: ApplicationEventPublisher,
 ) : SpringTest({
 
     describe("회원가입") {
@@ -47,6 +53,7 @@ class UserControllerTest(
         context("회원가입이 가능한 경우") {
 
             every { userService.signUp(newSignUpUserCommand()) } answers { newUserDto() }
+            every { eventPublisher.publishEvent(UserSignedUpEvent(userId = DEFAULT_USER_ID)) } answers {}
 
             val actual = signUp(newSignUpUserRequest())
 
