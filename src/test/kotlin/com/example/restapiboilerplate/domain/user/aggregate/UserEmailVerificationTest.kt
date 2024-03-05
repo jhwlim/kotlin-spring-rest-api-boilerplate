@@ -12,9 +12,10 @@ import com.example.restapiboilerplate.newUser
 import com.example.restapiboilerplate.newUserEmailVerification
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.data.forAll
+import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.matchers.types.shouldBeTypeOf
 
 class UserEmailVerificationTest : DescribeSpec({
 
@@ -66,46 +67,26 @@ class UserEmailVerificationTest : DescribeSpec({
 
         }
 
-        context("이미 인증된 이메일인 경우") {
+        context("이메일 인증에 실패하는 경우") {
 
-            val user = newUser(id = 1L)
-            val userEmailVerification = newUserEmailVerification(user = user, verifiedAt = DEFAULT_DATE_TIME)
+            forAll(
+                row("이미 인증된 이메일인 경우", AlreadyVerifiedEmailException(), newUserEmailVerification(user = newUser(id = 1L), verifiedAt = DEFAULT_DATE_TIME)),
+                row("토큰이 일치하지 않는 경우", UserEmailTokenNotMatchedException(), newUserEmailVerification(user = newUser(id = 1L), token = "${DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE}_1")),
+                row("토큰이 만료된 경우", UserEmailTokenExpiredException(), newUserEmailVerification(user = newUser(id = 1L), expiredAt = DEFAULT_DATE_TIME.minusNanos(1L)))
 
-            it("예외가 발생해야 한다.") {
-                val actualException = shouldThrow<VerifyUserEmailFailureException> {
-                    userEmailVerification.verify(token, current)
+            ) { context, expectedException, userEmailVerification,  ->
+
+                context(context) {
+
+                    it("예외가 발생해야 한다.") {
+                        val actualException = shouldThrow<VerifyUserEmailFailureException> {
+                            userEmailVerification.verify(token, current)
+                        }
+                        actualException shouldBe expectedException
+                    }
+
                 }
-                actualException.shouldBeTypeOf<AlreadyVerifiedEmailException>()
-            }
 
-        }
-
-        context("토큰이 일치하지 않는 경우") {
-
-            val user = newUser(id = 1L)
-            val userEmailVerification = newUserEmailVerification(user = user)
-            val differentToken = UserEmailVerificationToken("${DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE}_1")
-
-            it("예외가 발생해야 한다.") {
-                val actualException = shouldThrow<VerifyUserEmailFailureException> {
-                    userEmailVerification.verify(differentToken, current)
-                }
-                actualException.shouldBeTypeOf<UserEmailTokenNotMatchedException>()
-            }
-
-        }
-
-        context("토큰이 만료된 경우") {
-
-            val user = newUser(id = 1L)
-            val userEmailVerification = newUserEmailVerification(user = user)
-            val afterExpiredAt = DEFAULT_DATE_TIME.plusNanos(1L)
-
-            it("예외가 발생해야 한다.") {
-                val actualException = shouldThrow<VerifyUserEmailFailureException> {
-                    userEmailVerification.verify(token, afterExpiredAt)
-                }
-                actualException.shouldBeTypeOf<UserEmailTokenExpiredException>()
             }
 
         }

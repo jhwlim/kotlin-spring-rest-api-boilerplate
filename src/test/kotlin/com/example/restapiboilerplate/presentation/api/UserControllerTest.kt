@@ -1,6 +1,7 @@
 package com.example.restapiboilerplate.presentation.api
 
 import com.example.restapiboilerplate.*
+import com.example.restapiboilerplate.TestConstants.DEFAULT_EXCEPTION_MESSAGE
 import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE
 import com.example.restapiboilerplate.application.UserService
 import com.example.restapiboilerplate.application.exception.ValidationException
@@ -33,8 +34,6 @@ class UserControllerTest(
     @MockkBean
     private val userService: UserService,
 ) : SpringIntegrationTest({
-
-    val errorMessage = "테스트 에러 메시지"
 
     describe("회원가입") {
 
@@ -99,45 +98,37 @@ class UserControllerTest(
 
         }
 
-        context("Validation 에러가 발생한 경우") {
+        context("UserService 에서 예외가 발생한 경우") {
 
-            every { userService.signUp(newSignUpUserCommand()) } throws ValidationException(errorMessage)
+            forAll(
+                row("Validation 에러가 발생한 경우", ValidationException(DEFAULT_EXCEPTION_MESSAGE), 400, "ERR-901"),
+                row("기타 에러가 발생한 경우", Exception(DEFAULT_EXCEPTION_MESSAGE), 500, "ERR-999"),
+            ) { context, serviceException, expectedStatus, expectedErrorCode ->
 
-            val actual = signUp(newSignUpUserRequest())
+                context(context) {
 
-            it("status 는 400 을 반환해야 한다.") {
-                actual.andExpect {
-                    status { isBadRequest() }
+                    every { userService.signUp(newSignUpUserCommand()) } throws serviceException
+
+                    val actual = signUp(newSignUpUserRequest())
+
+                    it("status 는 $expectedStatus 을 반환해야 한다.") {
+                        actual.andExpect {
+                            status { isEqualTo(expectedStatus) }
+                        }
+                    }
+
+                    it("errorCode 는 $expectedErrorCode 을 반환해야 한다.") {
+                        val actualResponse = objectMapper.readErrorResponse(actual.andReturn())
+
+                        actualResponse shouldBe ErrorResponse(errorCode = expectedErrorCode, message = serviceException.message ?: "")
+                    }
+
                 }
-            }
 
-            it("errorCode 는 ERR-901 을 반환해야 한다.") {
-                val actualResponse = objectMapper.readErrorResponse(actual.andReturn())
-
-                actualResponse shouldBe ErrorResponse(errorCode = "ERR-901", message = errorMessage)
             }
 
         }
 
-        context("기타 에러가 발생한 경우") {
-
-            every { userService.signUp(newSignUpUserCommand()) } throws Exception(errorMessage)
-
-            val actual = signUp(newSignUpUserRequest())
-
-            it("status 는 500 을 반환해야 한다.") {
-                actual.andExpect {
-                    status { isInternalServerError() }
-                }
-            }
-
-            it("errorCode 는 ERR-999 을 반환해야 한다.") {
-                val actualResponse = objectMapper.readErrorResponse(actual.andReturn())
-
-                actualResponse shouldBe ErrorResponse(errorCode = "ERR-999", message = errorMessage)
-            }
-
-        }
 
     }
 

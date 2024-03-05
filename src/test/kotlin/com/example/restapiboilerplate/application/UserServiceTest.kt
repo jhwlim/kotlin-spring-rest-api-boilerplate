@@ -97,17 +97,17 @@ class UserServiceTest : DescribeSpec({
         context("token 인증에 실패한 경우") {
 
             forAll(
-                row(AlreadyVerifiedEmailException(), token, DEFAULT_DATE_TIME, DEFAULT_DATE_TIME.minusNanos(1)),
-                row(UserEmailTokenNotMatchedException(), UserEmailVerificationToken("test12"), DEFAULT_DATE_TIME, null),
-                row(UserEmailTokenExpiredException(), token, DEFAULT_DATE_TIME.plusNanos(1), null),
-            ) { expectedException, token, current, verifiedAt ->
+                row("이미 인증된 이메일인 경우", AlreadyVerifiedEmailException(), token, DEFAULT_DATE_TIME, DEFAULT_DATE_TIME.minusNanos(1)),
+                row("토큰이 일치하지 않는 경우", UserEmailTokenNotMatchedException(), UserEmailVerificationToken("test12"), DEFAULT_DATE_TIME, null),
+                row("토큰이 만료된 경우", UserEmailTokenExpiredException(), token, DEFAULT_DATE_TIME.plusNanos(1), null),
+            ) { context, expectedException, token, current, verifiedAt ->
 
                 val savedUserEmailVerification = newUserEmailVerification(user = user, token = "test", verifiedAt = verifiedAt)
 
                 every { userEmailVerificationRepository.findById(userId) } answers { savedUserEmailVerification }
                 every { LocalDateTime.now() } answers { current }
 
-                context("인증 실패 타입 : ${expectedException.message}") {
+                context(context) {
 
                     it("예외가 발생해야 한다.") {
                         val actualException = shouldThrow<VerifyUserEmailFailureException> {

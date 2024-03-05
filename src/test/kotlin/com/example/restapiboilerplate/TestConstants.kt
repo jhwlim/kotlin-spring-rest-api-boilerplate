@@ -5,6 +5,8 @@ import java.time.LocalDateTime
 
 object TestConstants {
 
+    const val DEFAULT_EXCEPTION_MESSAGE = "테스트 에러 메시지"
+
     const val DEFAULT_USER_ID = 1L
     const val DEFAULT_USER_NAME = "테스트"
     const val DEFAULT_USER_EMAIL_VALUE = "test1234@test.com"
