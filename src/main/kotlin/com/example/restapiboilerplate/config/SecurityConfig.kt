@@ -1,5 +1,6 @@
 package com.example.restapiboilerplate.config
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -17,6 +18,9 @@ class SecurityConfig {
             .csrf {
                 it.disable()
             }
+            .headers {
+                it.frameOptions { frame -> frame.sameOrigin() }
+            }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
@@ -28,6 +32,7 @@ class SecurityConfig {
             }
             .authorizeHttpRequests {
                 it.requestMatchers(*PERMIT_ALL_PATHS.toTypedArray()).permitAll()
+                    .requestMatchers(PathRequest.toH2Console()).permitAll()
             }
             .build()
     }
