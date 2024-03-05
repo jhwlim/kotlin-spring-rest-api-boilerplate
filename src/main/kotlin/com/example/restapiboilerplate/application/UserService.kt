@@ -32,6 +32,7 @@ class UserService(
             .let { UserDto.from(it) }
     }
 
+    @Transactional
     fun verifyUserEmail(userId: Long, token: UserEmailVerificationToken) {
         val emailVerification = userEmailVerificationRepository.findById(userId) ?: throw NotFoundUserEmailVerificationException(userId)
 
