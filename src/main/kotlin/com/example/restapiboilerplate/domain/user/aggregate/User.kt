@@ -20,6 +20,7 @@ class User(
     var email: Email,
     var name: String,
     var password: Password,
+    @Enumerated(EnumType.STRING)
     var status: UserStatus,
     @CreatedDate
     var createdAt: LocalDateTime = LocalDateTime.MIN,
