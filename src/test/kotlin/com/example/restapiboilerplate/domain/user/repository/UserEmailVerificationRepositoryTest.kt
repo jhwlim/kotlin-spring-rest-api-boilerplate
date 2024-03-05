@@ -1,6 +1,6 @@
 package com.example.restapiboilerplate.domain.user.repository
 
-import com.example.restapiboilerplate.SpringIntegrationTest
+import com.example.restapiboilerplate.SpringTest
 import com.example.restapiboilerplate.TestConstants.DEFAULT_USER_EMAIL_VERIFICATION_TOKEN_VALUE
 import com.example.restapiboilerplate.config.JpaConfig
 import com.example.restapiboilerplate.domain.user.value.UserEmailVerificationToken
@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Import
 class UserEmailVerificationRepositoryTest(
     private val userEmailVerificationRepository: UserEmailVerificationRepository,
     private val entityManager: TestEntityManager,
-) : SpringIntegrationTest({
+) : SpringTest({
 
     describe("save") {
 

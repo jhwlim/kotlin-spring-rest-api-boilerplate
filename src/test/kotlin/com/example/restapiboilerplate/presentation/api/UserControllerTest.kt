@@ -33,7 +33,7 @@ class UserControllerTest(
     private val objectMapper: ObjectMapper,
     @MockkBean
     private val userService: UserService,
-) : SpringIntegrationTest({
+) : SpringTest({
 
     describe("회원가입") {
 

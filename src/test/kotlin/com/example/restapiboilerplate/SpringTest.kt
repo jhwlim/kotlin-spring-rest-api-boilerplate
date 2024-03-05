@@ -5,7 +5,7 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.extensions.spring.SpringTestExtension
 import io.kotest.extensions.spring.SpringTestLifecycleMode
 
-abstract class SpringIntegrationTest(
+abstract class SpringTest(
     body: DescribeSpec.() -> Unit
 ) : DescribeSpec(body) {
 

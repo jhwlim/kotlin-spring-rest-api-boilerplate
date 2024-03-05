@@ -1,6 +1,6 @@
 package com.example.restapiboilerplate.domain.user.repository
 
-import com.example.restapiboilerplate.SpringIntegrationTest
+import com.example.restapiboilerplate.SpringTest
 import com.example.restapiboilerplate.config.JpaConfig
 import com.example.restapiboilerplate.domain.user.value.Email
 import com.example.restapiboilerplate.newUser
@@ -18,7 +18,7 @@ import java.time.LocalDateTime
 class UserRepositoryTest(
     private val userRepository: UserRepository,
     private val entityManager: TestEntityManager,
-) : SpringIntegrationTest({
+) : SpringTest({
 
     describe("save") {
 
