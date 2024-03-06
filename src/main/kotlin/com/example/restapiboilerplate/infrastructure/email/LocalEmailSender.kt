@@ -11,7 +11,10 @@ private val log = KotlinLogging.logger {}
 class LocalEmailSender : UserEmailVerificationSender {
 
     override fun sendUserEmailVerification(userEmailVerification: UserEmailVerification) {
-        log.info { "userId : ${userEmailVerification.user.id}, token : ${userEmailVerification.token}" }
+        val userId = userEmailVerification.user.id
+        val token = userEmailVerification.token
+
+        log.info { "path : /v1/users/$userId/verifyEmail?token=$token" }
     }
 
 }
